@@ -4,8 +4,8 @@ services:
     ports:
       - '5434:5432'
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: abdellah
+      POSTGRES_PASSWORD: abdellah
       POSTGRES_DB: nest
     networks:
       - abdellahnetwork

@@ -19,6 +19,7 @@ describe('App e2e', () => {
     app.useGlobalPipes(new ValidationPipe({ whitelist: true }));
     await app.init();
     app.listen(3334);
+
     prisma = app.get(PrismaService);
     await prisma.cleanDb();
     pactum.request.setBaseUrl('http://localhost:3334/');
@@ -97,11 +98,11 @@ describe('App e2e', () => {
           .withHeaders({ Authorization: 'Bearer $S{userAt}' })
           .withBody(dto)
           .expectStatus(201)
-          .inspect();
+          .stores('bookmarkId', 'id');
       });
     });
     describe('get bookmarks', () => {
-      it('should get empty bookmarks', () => {
+      it('should get bookmarks', () => {
         return pactum
           .spec()
           .get('bookmarks')
@@ -109,8 +110,52 @@ describe('App e2e', () => {
           .expectStatus(200);
       });
     });
-    describe('get bookmark by id', () => {});
-    describe('edit bookmark', () => {});
-    describe('delete bookmark', () => {});
+    describe('get bookmark by id', () => {
+      it('should get bookmark by id', () => {
+        return pactum
+          .spec()
+          .get('bookmarks/{id}')
+          .withPathParams('id', '$S{bookmarkId}')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          });
+        // .expectStatus(200)
+        // .expectBodyContains('$S{bookmarkId}')
+        // .inspect()
+      });
+    });
+    describe('edit bookmark', () => {
+      const dto: EditbookmarkDto = {
+        title:
+          'Kubernetes Course - Full Beginners Tutorial (Containerize Your Apps!)',
+        description:
+          'Learn how to use Kubernetes in this complete course. Kubernetes makes it possible to containerize applications and simplifies app deployment to production.',
+      };
+      it('should edit bookmark', () => {
+        return pactum
+          .spec()
+          .patch('bookmarks/{id}')
+          .withPathParams('id', '$S{bookmarkId}')
+          .withHeaders({
+            Authorization: 'Bearer $S{userAt}',
+          })
+          .withBody(dto)
+          .expectStatus(200)
+          .expectBodyContains(dto.title)
+          .expectBodyContains(dto.description);
+      });
+    });
+    // describe('delete bookmark', () => {
+    //   it('should delete bookmark', () => {
+    //     return pactum
+    //       .spec()
+    //       .delete('/bookmarks/{id}')
+    //       .withPathParams('id', '$S{bookmarkId}')
+    //       .withHeaders({
+    //         Authorization: 'Bearer $S{userAt}',
+    //       })
+    //       .expectStatus(200);
+    //   });
+    // });
   });
 });

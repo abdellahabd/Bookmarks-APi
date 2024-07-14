@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { BookmarkService } from './bookmark.service';
-import { GetUser } from 'src/auth/decorators';
+import { GetUser } from '../auth/decorators/get-user';
 import { CreatebookmarkDto, EditbookmarkDto } from './dto';
 
 @UseGuards(AuthGuard('jwt'))

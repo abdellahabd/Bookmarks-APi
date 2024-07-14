@@ -6,6 +6,7 @@ import { PrismaService } from '../src/prisma/prisma.service';
 import * as pactum from 'pactum';
 import { AuthDto } from '../src/auth/dto';
 import { EditDto } from 'src/user/dto';
+import { CreatebookmarkDto, EditbookmarkDto } from 'src/bookmark/dto';
 
 describe('App e2e', () => {
   let app: INestApplication;
@@ -84,8 +85,30 @@ describe('App e2e', () => {
     });
   });
   describe('BookMarks', () => {
-    describe('create bookmark', () => {});
-    describe('get bookmarks', () => {});
+    describe('create bookmark', () => {
+      const dto: CreatebookmarkDto = {
+        title: 'البناء العقدي',
+        link: 'C:/Users/البناء%20العقدي%20للجيل%20الصاعد.pdf',
+      };
+      it('should create bookmark', () => {
+        return pactum
+          .spec()
+          .post('bookmarks')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .withBody(dto)
+          .expectStatus(201)
+          .inspect();
+      });
+    });
+    describe('get bookmarks', () => {
+      it('should get empty bookmarks', () => {
+        return pactum
+          .spec()
+          .get('bookmarks')
+          .withHeaders({ Authorization: 'Bearer $S{userAt}' })
+          .expectStatus(200);
+      });
+    });
     describe('get bookmark by id', () => {});
     describe('edit bookmark', () => {});
     describe('delete bookmark', () => {});
